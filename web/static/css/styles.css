@@ -1,0 +1,149 @@
+@font-face {
+  font-family: 'HeadingNowVariable';
+  src: url('../assets/fonts/HeadingNowVariable.woff2') format('woff2');
+  font-style: normal;
+  font-stretch: normal;
+  font-display: swap;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'HeadingNowVariable', Arial, sans-serif;
+  font-variation-settings: "wdth" 668, "wght" 500;
+  background-color: #121212;
+  color: #fff;
+  overflow-x: hidden;
+  user-select: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+  text-align: center; /* Center text in the body */
+}
+
+.container {
+  position: relative; /* Required for the pseudo-element positioning */
+  width: 60vw; /* Reduced width */
+  max-width: 800px; /* Adjusted maximum width */
+  height: 300px; /* Fixed height */
+  margin: 0 auto;
+  background: linear-gradient(135deg, rgba(4, 3, 48, 0.98), rgba(23, 1, 66, 0.98));
+  padding: 20px;
+  border-radius: 16px; /* Increased border-radius */
+  color: #fff; /* Ensure text is white */
+  overflow: hidden; /* Hide overflow */
+  display: flex; /* Use flexbox */
+  justify-content: center; /* Center items horizontally */
+  align-items: center; /* Center items vertically */
+  transition: opacity 0.5s ease-in-out; /* Smooth transition for background color */
+}
+
+.container.dimmed {
+  background-color: rgba(0, 0, 0, 0.5); /* Dimmed background */
+}
+
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none; /* Ensure it doesn't interfere with interactions */
+}
+
+#status {
+  display: flex; /* Use flexbox */
+  align-items: center; /* Center items vertically */
+}
+
+#album_art {
+  display: flex;
+  align-items: center; /* Center the album art vertically */
+  justify-content: center; /* Center the album art horizontally */
+  margin-right: 20px; /* Space between album art and text */
+}
+
+#album_art img {
+  width: 240px; /* Fixed width */
+  height: 240px; /* Fixed height */
+  border-radius: 16px; /* Increased border-radius for consistency */
+  transition: opacity 0.5s ease-in-out; /* Smooth transition for album art */
+}
+
+#text_info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center text vertically */
+  align-items: flex-start; /* Align text to the left */
+  text-align: left; /* Left-align text within the element */
+  overflow: hidden; /* Hide overflow */
+  font-size: 25px; /* Increase font size */
+  transition: opacity 0.5s ease-in-out; /* Smooth transition for text */
+  padding-right: 10px;
+}
+
+#text_info h1 {
+  font-size: 25px; /* Increased font size */
+  margin: 0 0 5px 0; /* Remove top margin and reduce bottom margin */
+  font-variation-settings: "wdth" 650, "wght" 600; /* Thicker weight using variable font */
+  text-align: left; /* Left-align the heading text */
+}
+
+#text_info div {
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Hide overflow */
+  text-overflow: ellipsis; /* Add ellipsis for overflow text */
+  transition: opacity 0.5s ease-in-out; /* Smooth transition for text */
+}
+
+#current_artist {
+  font-size: 22px;
+  font-variation-settings: "wdth" 600, "wght" 500;
+  color: hsla(0, 0%, 100%, 0.8); 
+}
+
+#current_song {
+  font-size: 30px;
+  font-style: italic;
+  font-variation-settings: "wdth" 750, "wght" 750;
+  text-transform: uppercase;
+  color: #fff;
+  margin-right: 10px; /* Add slight margin to the right */
+  white-space: normal; /* Allow text to wrap */
+  overflow: hidden; /* Hide overflow */
+  text-overflow: ellipsis; /* Add ellipsis for overflow text */
+  display: -webkit-box; /* Use flexbox for truncation */
+  -webkit-line-clamp: 2; /* Limit to 2 lines */
+  line-clamp: 2;
+  -webkit-box-orient: vertical; /* Vertical orientation for flexbox */
+  line-height: 1.2; /* Reduce line spacing */
+  padding-right: 5px; /* Add padding to the right */
+}
+
+#instrument {
+  display: flex;
+  align-items: center; /* Center items vertically */
+}
+
+#instrument img {
+  width: 40px; /* Small icon size */
+  height: 40px; /* Small icon size */
+  margin-top: 10px; /* Space between text and icon */
+  transition: opacity 0.5s ease-in-out; /* Smooth transition for instrument icon */
+}
+
+#difficulty_icon {
+  width: 40px; /* Small icon size */
+  height: 40px; /* Small icon size */
+  margin-left: 10px; /* Space between intensity icon and instrument icon */
+  transition: opacity 0.5s ease-in-out; /* Smooth transition for difficulty icon */
+}
+
+#intensity_icon {
+  height: 40px; /* Fixed height */
+  width: auto !important; /* Maintain aspect ratio */
+  margin-left: 5px; /* Space between instrument icon and intensity icon */
+  transition: opacity 0.5s ease-in-out; /* Smooth transition for intensity icon */
+}
