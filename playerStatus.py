@@ -194,7 +194,9 @@ def format_instrument_name(instrument):
         'bass': 'Bass',
         'drum': 'Drums',
         'guitar': 'Lead',
-        'vocals': 'Vocals'
+        'vocals': 'Vocals',
+        'plasticguitar': 'Pro Lead',
+        'plasticbass': 'Pro Bass'
     }
     return instrument_mapping.get(instrument, instrument.capitalize())
 
@@ -308,6 +310,8 @@ def monitor_log_file():
                             instrument_key = 'gr'  # Correct the instrument key for lead (guitar)
                         elif instrument_key == 'vo':
                             instrument_key = 'vl'  # Correct the instrument key for vocals
+                        elif instrument_key == 'pl':
+                            instrument_key = 'pg'  # Correct the instrument key for pro lead (guitar)
                         
                         # Fetch song info if not already fetched
                         if not current_song:

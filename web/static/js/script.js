@@ -113,6 +113,12 @@ async function fetchStatus() {
             case 'vocals':
                 instrumentSrc = '/static/assets/img/vocals.png';
                 break;
+            case 'pro lead':
+                instrumentSrc = '/static/assets/img/pro_lead.png';
+                break;
+            case 'pro bass':
+                instrumentSrc = '/static/assets/img/pro_bass.png';
+                break;
             default:
                 instrumentSrc = '';
         }
