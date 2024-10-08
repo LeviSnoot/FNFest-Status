@@ -8,7 +8,9 @@ Monitor and display the status of Fortnite Festival events.
 - Includes a Flask web app that can be used in OBS to display information on stream.
 
 ## What does it do?
-The main script (`playerStatus.py`) simply reads your Fortnite log file (located in `%localappdata%\FortniteGame\Saved\Logs\FortniteGame.log`) and filters it for known events relating to Fortnite Festival. It calls on the public [Fortnite Festival Content API](https://fortnitecontent-website-prod07.ol.epicgames.com/content/api/pages/fortnite-game/spark-tracks) to match song ID's from the log to their metadata such as track and artist names.
+You can use the demo web app I created to add a "Now Playing" widget to your streams by adding it as a Browser Source in OBS (further insctructions [below](#usage))
+
+The script (`playerStatus.py`) simply reads your Fortnite log file (located in `%localappdata%\FortniteGame\Saved\Logs\FortniteGame.log`) and filters it for known events relating to Fortnite Festival. It calls on the public [Fortnite Festival Content API](https://fortnitecontent-website-prod07.ol.epicgames.com/content/api/pages/fortnite-game/spark-tracks) to match song ID's from the log to their metadata such as track and artist names.
 
 ## Prerequisites
 - Python 3.x
@@ -33,19 +35,34 @@ The main script (`playerStatus.py`) simply reads your Fortnite log file (located
 
 ## Usage
 
-If you simply want a shell monitor of what is happening in Fortnite Festival, just run `playerStatus.py`
-```sh
-python .\playerStatus.py
-```
-If you additionally want to make use of the web app for display in OBS (or anywhere else), also start the web server after performing the previous step.
+Run `OBSWidget.py` to start the web server and status monitor. This will allow you to display the currently playing song and other information in OBS.
 
 ```sh
-python .\web\app.py
+python OBSWidget.py 
 ```
 
 If you have a service already running on port `5000`, make a copy of `config-example.ini`, rename it to `config.ini` and change the port value inside to whatever you'd like. You'll be able to access the web app at `http://127.0.0.1:<port-number>`.
 
 The script currently works best if you start it after Fortnite has launched and you're in the lobby. I plan to make it work more robustly as a background service in future updates.
+
+## Displaying in OBS
+
+Once you've started `OBSWidget.py`, add a browser source in OBS.
+
+**URL:** `http://127.0.0.1:<port-number>`
+
+**Width:** 720 - 1280px
+
+**Height:** 400px
+
+- [x] Use custom frame rate
+
+**FPS:** 60
+
+Leave everything else default, including Custom CSS.
+
+[![](assets/obs-demo.jpg)](https://youtu.be/eJFkqqlJuFY)
+Click the image above for a video demo.
 
 # Roadmap
 
