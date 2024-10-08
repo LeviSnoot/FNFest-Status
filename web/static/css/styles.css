@@ -24,10 +24,11 @@ body {
 
 .container {
   position: relative; /* Required for the pseudo-element positioning */
-  width: 60vw; /* Reduced width */
-  max-width: 800px; /* Adjusted maximum width */
+  width: 95vw; 
+  min-width: 480px;
+  max-width: 1280px; /* Adjusted maximum width */
   height: 300px; /* Fixed height */
-  margin: 0 auto;
+  margin: 20px;
   background: linear-gradient(135deg, rgba(4, 3, 48, 0.98), rgba(23, 1, 66, 0.98));
   padding: 20px;
   border-radius: 16px; /* Increased border-radius */

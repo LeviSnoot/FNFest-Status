@@ -7,9 +7,28 @@ import psutil
 import json
 import requests
 from datetime import datetime, timedelta
+import sys
 
 # Path to the status file
 status_file_path = os.path.join(os.path.dirname(__file__), 'status.json')
+
+# Initial status values
+initial_status = {
+    "current_song": None,
+    "current_artist": None,
+    "current_instrument": None,
+    "current_intensity": None,
+    "current_difficulty": None,
+    "current_album_art": None,
+    "song_state": False
+}
+
+# Check if the status file exists, if not create it with initial values
+if not os.path.exists(status_file_path):
+    with open(status_file_path, 'w') as f:
+        json.dump(initial_status, f)
+    print(f"Created initial status file at {status_file_path}")
+    sys.stdout.flush()
 
 def write_status_to_file(status):
     with open(status_file_path, 'w') as f:
@@ -58,12 +77,14 @@ def reset_state():
     in_lobby = False
     in_sleep_mode = False
     print("State has been reset.")
+    sys.stdout.flush()
 
 def update_state(new_state):
     global in_backstage
     if in_backstage != new_state:
         in_backstage = new_state
         print(f"Player is {'now in' if in_backstage else 'no longer in'} the backstage area.")
+        sys.stdout.flush()
 
 def update_song_state(song, instrument, intensity, difficulty, artist, album_art):
     global playing_song, current_song, current_instrument, current_intensity, current_difficulty
@@ -85,8 +106,11 @@ def update_song_state(song, instrument, intensity, difficulty, artist, album_art
     }
     write_status_to_file(status)
     print(f"Updated status: {json.dumps(status, indent=4)}")
+    sys.stdout.flush()
     print(f"Playing song: {current_song} by {artist}, Instrument: {instrument}, Intensity: {intensity}, Difficulty: {difficulty}")
+    sys.stdout.flush()
     print(f"Album Art URL: {album_art}")
+    sys.stdout.flush()
     
     # Wait for a few seconds before setting song_state to True
     time.sleep(2)
@@ -95,6 +119,7 @@ def update_song_state(song, instrument, intensity, difficulty, artist, album_art
     status["song_state"] = True
     write_status_to_file(status)
     print(f"Updated status: {json.dumps({'song_state': True}, indent=4)}")
+    sys.stdout.flush()
 
 def end_song_state():
     global playing_song, current_song, current_instrument, current_intensity, current_difficulty, current_artist, current_album_art
@@ -112,7 +137,9 @@ def end_song_state():
     }
     write_status_to_file(status)
     print(f"Updated status: {json.dumps({'song_state': False}, indent=4)}")
+    sys.stdout.flush()
     print(f"Finished playing song: {current_song}")
+    sys.stdout.flush()
     
     # Wait for a few seconds before resetting the rest of the properties
     time.sleep(2)
@@ -129,6 +156,7 @@ def end_song_state():
     }
     write_status_to_file(status)
     print(f"Updated status: {json.dumps(status, indent=4)}")
+    sys.stdout.flush()
     
     # Reset global variables
     current_song = None
@@ -173,10 +201,13 @@ def fetch_json_data():
             with open(last_update_file, 'w') as f:
                 f.write(datetime.now().isoformat())
             print("API data updated.")
+            sys.stdout.flush()
         else:
             print("Failed to fetch API.")
+            sys.stdout.flush()
     else:
         print("Using cached API.")
+        sys.stdout.flush()
 
 def get_song_info(song_id):
     # Correct the song ID if it exists in the mapping
@@ -187,6 +218,7 @@ def get_song_info(song_id):
             return data[corrected_song_id]['track']
         else:
             print(f"Song ID '{corrected_song_id}' not found in API.")
+            sys.stdout.flush()
     return None
 
 def format_instrument_name(instrument):
@@ -218,6 +250,7 @@ def monitor_log_file():
         if is_game_running():
             if not game_running:
                 print("Fortnite has started.")
+                sys.stdout.flush()
                 game_running = True
                 fetch_json_data()
 
@@ -236,22 +269,26 @@ def monitor_log_file():
                             matchmaking_started = True
                             in_lobby = False
                             print("Matchmaking started.")
+                            sys.stdout.flush()
                         continue
 
                     # Check for Matchmaking start
                     if 'LogAthenaMatchmakingWidget: UFortAthenaMatchmakingWidgetLegacy::RequestMatchmakingStart' in line:
                         matchmaking_started = True
                         print("Matchmaking started.")
+                        sys.stdout.flush()
                     
                     # Check for Battle Stage mode
                     if 'Playlist_PilgrimBattleStage' in line:
                         is_battle_stage = True
                         print("Battle Stage mode detected.")
+                        sys.stdout.flush()
                     
                     # Check for Main Stage mode
                     if 'Playlist_PilgrimQuickplay' in line:
                         is_battle_stage = False
                         print("Main Stage mode detected.")
+                        sys.stdout.flush()
                     
                     # Check for entering Pregame state (backstage)
                     if 'LogPilgrimQuickplayStateMachine: Display: (Client -1)Entering Pilgrim Quickplay state EPilgrimQuickplayState::Pregame' in line:
@@ -264,6 +301,7 @@ def monitor_log_file():
                     # Check for loading into a game
                     if 'LogPilgrimQuickplayStateMachine: Display: (Client -1)Entering Pilgrim Quickplay state EPilgrimQuickplayState::Loading' in line:
                         print("Player is loading into a game.")
+                        sys.stdout.flush()
                     
                     # Check for Return to Main Menu
                     if 'LogOnlineGame: FortPC::ReturnToMainMenu' in line:
@@ -272,10 +310,12 @@ def monitor_log_file():
                         reset_state()
                         in_lobby = True
                         print("Player returned to main menu.")
+                        sys.stdout.flush()
                     
                     # Check for Song Start
                     if 'LogPilgrimMusicBattle: Client -1 received song to play:' in line:
                         print("Song gameplay started.")
+                        sys.stdout.flush()
                         # Extract song ID from the log line and convert to lowercase
                         song_id = line.split('received song to play: ')[1].split(' - ')[0].strip().lower()
                         song_info = get_song_info(song_id)
@@ -293,10 +333,12 @@ def monitor_log_file():
                     # Check for entering Song Results state (post-game screen)
                     if 'LogPilgrimQuickplayStateMachine: Display: (Client -1)Entering Pilgrim Quickplay state EPilgrimQuickplayState::SongResults' in line:
                         print("Entering Song Results state.")
+                        sys.stdout.flush()
                     
                     # Check for leaving Song Results state (post-game screen)
                     if 'LogPilgrimQuickplayStateMachine: Display: (Client -1)Leaving Pilgrim Quickplay state EPilgrimQuickplayState::SongResults' in line:
                         print("Leaving Song Results state.")
+                        sys.stdout.flush()
                     
                     # Check for Instrument and Difficulty
                     if 'LogPilgrimGemBreakListener: UPilgrimGemBreakListener::Init:' in line:
@@ -324,31 +366,38 @@ def monitor_log_file():
                             update_song_state(current_song, formatted_instrument, intensity_value, formatted_difficulty, current_artist, current_album_art)
                         else:
                             print(f"Instrument key '{instrument_key}' not found in song info.")
+                            sys.stdout.flush()
 
                     # Check for Matchmaking cancellation
                     if 'LogMatchmakingServiceClient: HandleError - Type: \'Canceled\'' in line:
                         matchmaking_started = False
                         print("Matchmaking canceled.")
+                        sys.stdout.flush()
 
                     # Check for entering Sleep Mode
                     if 'LogFortPlaytimeManager: UFortPlaytimeManager::SetPlaytimeState - Changing Playtime State from Unblocked to Sleep' in line:
                         in_sleep_mode = True
                         print("Player entered Sleep Mode.")
+                        sys.stdout.flush()
                     
                     # Check for leaving Sleep Mode
                     if 'LogFortPlaytimeManager: UFortPlaytimeManager::SetPlaytimeState - Changing Playtime State from Sleep to Unblocked' in line:
                         in_sleep_mode = False
                         print("Player left Sleep Mode.")
+                        sys.stdout.flush()
 
             print("Fortnite has stopped.")
+            sys.stdout.flush()
             reset_state()
             game_running = False
         else:
             if game_running:
                 print("Fortnite has stopped.")
+                sys.stdout.flush()
                 reset_state()
                 game_running = False
             print("Waiting for Fortnite to start...")
+            sys.stdout.flush()
             time.sleep(5)
 
 if __name__ == "__main__":
@@ -356,3 +405,4 @@ if __name__ == "__main__":
         monitor_log_file()
     except KeyboardInterrupt:
         print("Exiting...")
+        sys.stdout.flush()
