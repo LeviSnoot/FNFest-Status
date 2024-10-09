@@ -28,13 +28,14 @@ body {
   min-width: 480px;
   max-width: 1280px; /* Adjusted maximum width */
   height: 300px; /* Fixed height */
-  margin: 20px;
+  margin: 10px;
   background: linear-gradient(135deg, rgba(4, 3, 48, 0.98), rgba(23, 1, 66, 0.98));
   padding: 20px;
   border-radius: 16px; /* Increased border-radius */
   color: #fff; /* Ensure text is white */
   overflow: hidden; /* Hide overflow */
   display: flex; /* Use flexbox */
+  flex-wrap: wrap;
   justify-content: center; /* Center items horizontally */
   align-items: center; /* Center items vertically */
   transition: opacity 0.5s ease-in-out; /* Smooth transition for background color */
@@ -54,9 +55,15 @@ body {
   pointer-events: none; /* Ensure it doesn't interfere with interactions */
 }
 
+#header {
+  display: flex; /* Use flexbox */
+  align-items: center; /* Center items vertically */
+}
+
 #status {
   display: flex; /* Use flexbox */
   align-items: center; /* Center items vertically */
+  padding-top: 10px;
 }
 
 #album_art {
@@ -82,7 +89,7 @@ body {
   overflow: hidden; /* Hide overflow */
   font-size: 25px; /* Increase font size */
   transition: opacity 0.5s ease-in-out; /* Smooth transition for text */
-  padding-right: 10px;
+  /* padding-right: 10px; */
 }
 
 #text_info h1 {
@@ -101,14 +108,31 @@ body {
 
 #current_artist {
   font-size: 22px;
-  font-variation-settings: "wdth" 600, "wght" 500;
+  font-variation-settings: "wdth" 700, "wght" 500;
   color: hsla(0, 0%, 100%, 0.8); 
 }
 
-#current_song {
+#now_playing_header {
   font-size: 30px;
   font-style: italic;
-  font-variation-settings: "wdth" 750, "wght" 750;
+  font-variation-settings: "wdth" 850, "wght" 750;
+  text-transform: uppercase;
+  margin-top: -10px; /* shift header up a bit to better balance */
+  color: #fff;
+  white-space: normal; /* Allow text to wrap */
+  overflow: hidden; /* Hide overflow */
+  text-overflow: ellipsis; /* Add ellipsis for overflow text */
+  display: -webkit-box; /* Use flexbox for truncation */
+  -webkit-line-clamp: 2; /* Limit to 2 lines */
+  line-clamp: 2;
+  -webkit-box-orient: vertical; /* Vertical orientation for flexbox */
+  line-height: 1.2; /* Reduce line spacing */
+}
+
+#current_song {
+  font-size: 25px;
+  font-style: italic;
+  font-variation-settings: "wdth" 800, "wght" 750;
   text-transform: uppercase;
   color: #fff;
   margin-right: 10px; /* Add slight margin to the right */
@@ -116,8 +140,8 @@ body {
   overflow: hidden; /* Hide overflow */
   text-overflow: ellipsis; /* Add ellipsis for overflow text */
   display: -webkit-box; /* Use flexbox for truncation */
-  -webkit-line-clamp: 2; /* Limit to 2 lines */
-  line-clamp: 2;
+  -webkit-line-clamp: 3; /* Limit to 2 lines */
+  line-clamp: 3;
   -webkit-box-orient: vertical; /* Vertical orientation for flexbox */
   line-height: 1.2; /* Reduce line spacing */
   padding-right: 5px; /* Add padding to the right */
