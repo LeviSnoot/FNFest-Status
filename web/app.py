@@ -37,7 +37,8 @@ def index():
     return render_template('index.html')
 
 def run_flask(port):
-    app.run(debug=True, use_reloader=False, port=port)
+    debug_mode = os.getenv('FLASK_DEBUG', 'False').lower() in ['true', '1', 't']
+    app.run(debug=debug_mode, use_reloader=False, port=port)
 
 if __name__ == "__main__":
     config = read_config_from_file()
