@@ -20,7 +20,11 @@ initial_status = {
     "current_intensity": None,
     "current_difficulty": None,
     "current_album_art": None,
-    "song_state": False
+    "song_state": False,
+    "is_game_running": False,
+    "is_battle_stage": False,
+    "in_backstage": False,
+    "in_song_results": False
 }
 
 # Check if the status file exists, if not create it with initial values
@@ -33,6 +37,10 @@ if not os.path.exists(status_file_path):
 def write_status_to_file(status):
     with open(status_file_path, 'w') as f:
         json.dump(status, f)
+
+def read_status_from_file():
+    with open(status_file_path, 'r') as f:
+        return json.load(f)
 
 # Path to the log file
 log_file_path = os.path.expandvars(r'%localappdata%\FortniteGame\Saved\Logs\FortniteGame.log')
@@ -63,9 +71,11 @@ current_difficulty = None
 is_battle_stage = False
 in_lobby = False
 in_sleep_mode = False
+game_running_state = False
+in_song_results = False
 
 def reset_state():
-    global in_backstage, matchmaking_started, playing_song, current_song, current_instrument, current_intensity, current_difficulty, is_battle_stage, in_lobby, in_sleep_mode
+    global in_backstage, matchmaking_started, playing_song, current_song, current_instrument, current_intensity, current_difficulty, is_battle_stage, in_lobby, in_sleep_mode, game_running_state, in_song_results
     in_backstage = False
     matchmaking_started = False
     playing_song = False
@@ -76,13 +86,37 @@ def reset_state():
     is_battle_stage = False
     in_lobby = False
     in_sleep_mode = False
+    game_running_state = False
+    in_song_results = False
     print("State has been reset.")
+    sys.stdout.flush()
+    
+    # Update the status file to reflect the reset state
+    status = read_status_from_file()
+    status.update({
+        "current_song": None,
+        "current_artist": None,
+        "current_instrument": None,
+        "current_intensity": None,
+        "current_difficulty": None,
+        "current_album_art": None,
+        "song_state": False,
+        "is_game_running": False,
+        "is_battle_stage": False,
+        "in_backstage": False,
+        "in_song_results": False
+    })
+    write_status_to_file(status)
+    print(f"Updated status: {json.dumps(status, indent=4)}")
     sys.stdout.flush()
 
 def update_state(new_state):
     global in_backstage
     if in_backstage != new_state:
         in_backstage = new_state
+        status = read_status_from_file()
+        status["in_backstage"] = in_backstage
+        write_status_to_file(status)
         print(f"Player is {'now in' if in_backstage else 'no longer in'} the backstage area.")
         sys.stdout.flush()
 
@@ -95,7 +129,8 @@ def update_song_state(song, instrument, intensity, difficulty, artist, album_art
     current_difficulty = difficulty
     
     # First write to the status file with the information properties
-    status = {
+    status = read_status_from_file()
+    status.update({
         "current_song": song,
         "current_artist": artist,
         "current_instrument": instrument,
@@ -103,7 +138,7 @@ def update_song_state(song, instrument, intensity, difficulty, artist, album_art
         "current_difficulty": difficulty,
         "current_album_art": album_art,
         "song_state": False
-    }
+    })
     write_status_to_file(status)
     print(f"Updated status: {json.dumps(status, indent=4)}")
     sys.stdout.flush()
@@ -126,7 +161,8 @@ def end_song_state():
     playing_song = False
     
     # First write to the status file with song_state set to False
-    status = {
+    status = read_status_from_file()
+    status.update({
         "current_song": current_song,
         "current_artist": current_artist,
         "current_instrument": current_instrument,
@@ -134,7 +170,7 @@ def end_song_state():
         "current_difficulty": current_difficulty,
         "current_album_art": current_album_art,
         "song_state": False
-    }
+    })
     write_status_to_file(status)
     print(f"Updated status: {json.dumps({'song_state': False}, indent=4)}")
     sys.stdout.flush()
@@ -145,7 +181,7 @@ def end_song_state():
     time.sleep(2)
     
     # Second write to the status file with all properties reset
-    status = {
+    status.update({
         "current_song": None,
         "current_artist": None,
         "current_instrument": None,
@@ -153,7 +189,7 @@ def end_song_state():
         "current_difficulty": None,
         "current_album_art": None,
         "song_state": False
-    }
+    })
     write_status_to_file(status)
     print(f"Updated status: {json.dumps(status, indent=4)}")
     sys.stdout.flush()
@@ -242,7 +278,7 @@ def format_difficulty_name(difficulty):
     return difficulty_mapping.get(difficulty, difficulty)
 
 def monitor_log_file():
-    global matchmaking_started, is_battle_stage, game_running, current_song, current_artist, current_album_art, in_lobby, in_sleep_mode
+    global matchmaking_started, is_battle_stage, game_running, current_song, current_artist, current_album_art, in_lobby, in_sleep_mode, game_running_state, in_song_results
 
     game_running = False
 
@@ -253,6 +289,9 @@ def monitor_log_file():
                 sys.stdout.flush()
                 game_running = True
                 fetch_json_data()
+                status = read_status_from_file()
+                status["is_game_running"] = True
+                write_status_to_file(status)
 
             with open(log_file_path, 'r') as log_file:
                 log_file.seek(0, os.SEEK_END)  # Move to the end of the file
@@ -277,32 +316,38 @@ def monitor_log_file():
                         matchmaking_started = True
                         print("Matchmaking started.")
                         sys.stdout.flush()
-                    
+
                     # Check for Battle Stage mode
                     if 'Playlist_PilgrimBattleStage' in line:
                         is_battle_stage = True
+                        status = read_status_from_file()
+                        status["is_battle_stage"] = True
+                        write_status_to_file(status)
                         print("Battle Stage mode detected.")
                         sys.stdout.flush()
-                    
+
                     # Check for Main Stage mode
                     if 'Playlist_PilgrimQuickplay' in line:
                         is_battle_stage = False
+                        status = read_status_from_file()
+                        status["is_battle_stage"] = False
+                        write_status_to_file(status)
                         print("Main Stage mode detected.")
                         sys.stdout.flush()
-                    
+
                     # Check for entering Pregame state (backstage)
                     if 'LogPilgrimQuickplayStateMachine: Display: (Client -1)Entering Pilgrim Quickplay state EPilgrimQuickplayState::Pregame' in line:
                         update_state(True)
-                    
+
                     # Check for leaving Pregame state (no longer backstage)
                     if 'LogPilgrimQuickplayStateMachine: Display: (Client -1)Leaving Pilgrim Quickplay state EPilgrimQuickplayState::Pregame' in line:
                         update_state(False)
-                    
+
                     # Check for loading into a game
                     if 'LogPilgrimQuickplayStateMachine: Display: (Client -1)Entering Pilgrim Quickplay state EPilgrimQuickplayState::Loading' in line:
                         print("Player is loading into a game.")
                         sys.stdout.flush()
-                    
+
                     # Check for Return to Main Menu
                     if 'LogOnlineGame: FortPC::ReturnToMainMenu' in line:
                         if playing_song:
@@ -311,7 +356,7 @@ def monitor_log_file():
                         in_lobby = True
                         print("Player returned to main menu.")
                         sys.stdout.flush()
-                    
+
                     # Check for Song Start
                     if 'LogPilgrimMusicBattle: Client -1 received song to play:' in line:
                         print("Song gameplay started.")
@@ -325,21 +370,29 @@ def monitor_log_file():
                             current_album_art = song_info['au']
                         else:
                             current_song = None
-                    
+
                     # Check for Song End
                     if 'LogPilgrimQuickplayStateMachine: Display: (Client -1)Leaving Pilgrim Quickplay state EPilgrimQuickplayState::SongGameplay' in line:
                         end_song_state()
 
                     # Check for entering Song Results state (post-game screen)
                     if 'LogPilgrimQuickplayStateMachine: Display: (Client -1)Entering Pilgrim Quickplay state EPilgrimQuickplayState::SongResults' in line:
+                        in_song_results = True
+                        status = read_status_from_file()
+                        status["in_song_results"] = True
+                        write_status_to_file(status)
                         print("Entering Song Results state.")
                         sys.stdout.flush()
-                    
+
                     # Check for leaving Song Results state (post-game screen)
                     if 'LogPilgrimQuickplayStateMachine: Display: (Client -1)Leaving Pilgrim Quickplay state EPilgrimQuickplayState::SongResults' in line:
+                        in_song_results = False
+                        status = read_status_from_file()
+                        status["in_song_results"] = False
+                        write_status_to_file(status)
                         print("Leaving Song Results state.")
                         sys.stdout.flush()
-                    
+
                     # Check for Instrument and Difficulty
                     if 'LogPilgrimGemBreakListener: UPilgrimGemBreakListener::Init:' in line:
                         parts = line.split('using track ')[1].split(' and Difficulty ')
@@ -379,7 +432,7 @@ def monitor_log_file():
                         in_sleep_mode = True
                         print("Player entered Sleep Mode.")
                         sys.stdout.flush()
-                    
+
                     # Check for leaving Sleep Mode
                     if 'LogFortPlaytimeManager: UFortPlaytimeManager::SetPlaytimeState - Changing Playtime State from Sleep to Unblocked' in line:
                         in_sleep_mode = False
@@ -389,12 +442,18 @@ def monitor_log_file():
             print("Fortnite has stopped.")
             sys.stdout.flush()
             reset_state()
+            status = read_status_from_file()
+            status["is_game_running"] = False
+            write_status_to_file(status)
             game_running = False
         else:
             if game_running:
                 print("Fortnite has stopped.")
                 sys.stdout.flush()
                 reset_state()
+                status = read_status_from_file()
+                status["is_game_running"] = False
+                write_status_to_file(status)
                 game_running = False
             print("Waiting for Fortnite to start...")
             sys.stdout.flush()
