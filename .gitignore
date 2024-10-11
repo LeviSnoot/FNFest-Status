@@ -15,11 +15,11 @@ __pycache__/
 
 # Diagnostic scripts
 log_streamer.py
+diff.py
 
-# Status and data files
+# Status files
 status.json
-spark-tracks.json
-last_update.txt
+example-status.json
 
 # IDE and editor settings
 .vscode/
