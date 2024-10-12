@@ -64,6 +64,13 @@ Leave everything else default, including Custom CSS.
 [![](assets/obs-demo.jpg)](https://youtu.be/eJFkqqlJuFY)
 Click the image above for a video demo.
 
+# Updating
+
+Just pull the repo for now. If you don't know how to do this, just navigate to where you first cloned the repo, and in that directory, do:
+```sh
+git pull
+```
+
 # Roadmap
 
 - - [ ] Discord RPC implementation.
