@@ -16,7 +16,6 @@ async function fetchStatus() {
         const container = document.getElementById('container');
         const currentSong = document.getElementById('current_song');
         const currentArtist = document.getElementById('current_artist');
-        const currentDifficulty = document.getElementById('current_difficulty');
         const albumArt = document.getElementById('current_album_art');
         const instrumentIcon = document.getElementById('instrument_icon');
         const intensityIcon = document.getElementById('intensity_icon');
@@ -24,12 +23,15 @@ async function fetchStatus() {
         const textInfo = document.getElementById('text_info');
 
         if (data.song_state) {
-            container.style.opacity = 1;
-            textInfo.style.opacity = 1;
-            albumArt.style.opacity = 1;
-            instrumentIcon.style.opacity = 1;
-            intensityIcon.style.opacity = 1;
-            difficultyIcon.style.opacity = 1;
+            // Delay the visibility change to allow data to load
+            setTimeout(() => {
+                container.style.opacity = 1;
+                textInfo.style.opacity = 1;
+                albumArt.style.opacity = 1;
+                instrumentIcon.style.opacity = 1;
+                intensityIcon.style.opacity = 1;
+                difficultyIcon.style.opacity = 1;
+            }, 800); // Adjust the delay as needed
         } else {
             container.style.opacity = 0;
             textInfo.style.opacity = 0;
@@ -41,19 +43,15 @@ async function fetchStatus() {
 
         if (previousData.current_song !== data.current_song) {
             currentSong.parentElement.style.opacity = 0;
-            setTimeout(() => {
-                currentSong.textContent = data.current_song || 'Song N/A';
-                currentSong.parentElement.style.opacity = 1;
-            }, 500);
+            currentSong.textContent = data.current_song || 'Song N/A';
+            currentSong.parentElement.style.opacity = 1;
             previousData.current_song = data.current_song;
         }
 
         if (previousData.current_artist !== data.current_artist) {
             currentArtist.parentElement.style.opacity = 0;
-            setTimeout(() => {
-                currentArtist.textContent = data.current_artist || 'Artist N/A';
-                currentArtist.parentElement.style.opacity = 1;
-            }, 500);
+            currentArtist.textContent = data.current_artist || 'Artist N/A';
+            currentArtist.parentElement.style.opacity = 1;
             previousData.current_artist = data.current_artist;
         }
 
@@ -78,11 +76,9 @@ async function fetchStatus() {
 
             if (difficultySrc) {
                 difficultyIcon.style.opacity = 0;
-                setTimeout(() => {
-                    difficultyIcon.src = difficultySrc;
-                    difficultyIcon.style.display = 'block';
-                    difficultyIcon.style.opacity = 1;
-                }, 500);
+                difficultyIcon.src = difficultySrc;
+                difficultyIcon.style.display = 'block';
+                difficultyIcon.style.opacity = 1;
             } else {
                 difficultyIcon.style.display = 'none';
             }
@@ -91,11 +87,9 @@ async function fetchStatus() {
 
         if (previousData.current_album_art !== data.current_album_art) {
             albumArt.style.opacity = 0;
-            setTimeout(() => {
-                albumArt.src = data.current_album_art || '';
-                albumArt.style.display = data.current_album_art ? 'block' : 'none';
-                albumArt.style.opacity = 1;
-            }, 500);
+            albumArt.src = data.current_album_art || '';
+            albumArt.style.display = data.current_album_art ? 'block' : 'none';
+            albumArt.style.opacity = 1;
             previousData.current_album_art = data.current_album_art;
         }
 
@@ -126,11 +120,9 @@ async function fetchStatus() {
         if (previousData.current_instrument !== data.current_instrument) {
             if (instrumentSrc) {
                 instrumentIcon.style.opacity = 0;
-                setTimeout(() => {
-                    instrumentIcon.src = instrumentSrc;
-                    instrumentIcon.style.display = 'block';
-                    instrumentIcon.style.opacity = 1;
-                }, 500);
+                instrumentIcon.src = instrumentSrc;
+                instrumentIcon.style.display = 'block';
+                instrumentIcon.style.opacity = 1;
             } else {
                 instrumentIcon.style.display = 'none';
             }
@@ -143,11 +135,9 @@ async function fetchStatus() {
             if (data.current_intensity !== null) {
                 const intensitySrc = `/static/assets/img/int-${data.current_intensity}.png`;
                 intensityIcon.style.opacity = 0;
-                setTimeout(() => {
-                    intensityIcon.src = intensitySrc;
-                    intensityIcon.style.display = 'block';
-                    intensityIcon.style.opacity = 1;
-                }, 500);
+                intensityIcon.src = intensitySrc;
+                intensityIcon.style.display = 'block';
+                intensityIcon.style.opacity = 1;
             } else {
                 intensityIcon.style.display = 'none';
             }

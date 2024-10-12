@@ -54,7 +54,8 @@ album_art_base_url = 'https://levisnoot.github.io/fnfest-artwork-store/album_art
 
 # Mapping of known discrepancies between log song IDs and API song IDs
 song_id_mapping = {
-    'astronautintheocean': 'astronoutintheocean'
+    'astronautintheocean': 'astronoutintheocean',
+    'theedgeofglory': 'edgeofglory'
 }
 
 # Initial state
@@ -76,10 +77,6 @@ def reset_state():
     in_backstage = False
     matchmaking_started = False
     playing_song = False
-    current_song = None
-    current_instrument = None
-    current_intensity = None
-    current_difficulty = None
     is_battle_stage = False
     in_lobby = False
     in_sleep_mode = False
@@ -91,12 +88,6 @@ def reset_state():
     # Update the status file to reflect the reset state
     status = read_status_from_file()
     status.update({
-        "current_song": None,
-        "current_artist": None,
-        "current_instrument": None,
-        "current_intensity": None,
-        "current_difficulty": None,
-        "current_album_art": None,
         "song_state": False,
         "is_game_running": False,
         "is_battle_stage": False,
@@ -125,7 +116,7 @@ def update_song_state(song, instrument, intensity, difficulty, artist, album_art
     current_intensity = intensity
     current_difficulty = difficulty
 
-    # First write to the status file with the information properties
+    # Write to the status file with all properties
     status = read_status_from_file()
     status.update({
         "current_song": song,
@@ -134,7 +125,7 @@ def update_song_state(song, instrument, intensity, difficulty, artist, album_art
         "current_intensity": intensity,
         "current_difficulty": difficulty,
         "current_album_art": album_art,
-        "song_state": False
+        "song_state": True
     })
     write_status_to_file(status)
     print(f"Updated status: {json.dumps(status, indent=4)}")
@@ -144,60 +135,18 @@ def update_song_state(song, instrument, intensity, difficulty, artist, album_art
     print(f"Album Art URL: {album_art}")
     sys.stdout.flush()
 
-    # Wait for a few seconds before setting song_state to True
-    time.sleep(2)
-
-    # Second write to the status file with song_state set to True
-    status["song_state"] = True
-    write_status_to_file(status)
-    print(f"Updated status: {json.dumps({'song_state': True}, indent=4)}")
-    sys.stdout.flush()
-
 def end_song_state():
-    global playing_song, current_song, current_instrument, current_intensity, current_difficulty, current_artist, current_album_art
+    global playing_song
     playing_song = False
     
-    # First write to the status file with song_state set to False
+    # Write to the status file with song_state reset
     status = read_status_from_file()
-    status.update({
-        "current_song": current_song,
-        "current_artist": current_artist,
-        "current_instrument": current_instrument,
-        "current_intensity": current_intensity,
-        "current_difficulty": current_difficulty,
-        "current_album_art": current_album_art,
-        "song_state": False
-    })
-    write_status_to_file(status)
-    print(f"Updated status: {json.dumps({'song_state': False}, indent=4)}")
-    sys.stdout.flush()
-    print(f"Finished playing song: {current_song}")
-    sys.stdout.flush()
-
-    # Wait for a few seconds before resetting the rest of the properties
-    time.sleep(2)
-
-    # Second write to the status file with all properties reset
-    status.update({
-        "current_song": None,
-        "current_artist": None,
-        "current_instrument": None,
-        "current_intensity": None,
-        "current_difficulty": None,
-        "current_album_art": None,
-        "song_state": False
-    })
+    status["song_state"] = False
     write_status_to_file(status)
     print(f"Updated status: {json.dumps(status, indent=4)}")
     sys.stdout.flush()
-
-    # Reset global variables
-    current_song = None
-    current_instrument = None
-    current_intensity = None
-    current_difficulty = None
-    current_artist = None
-    current_album_art = None
+    print(f"Finished playing song: {current_song}")
+    sys.stdout.flush()
 
 def is_game_running():
     for proc in psutil.process_iter(['pid', 'name']):
