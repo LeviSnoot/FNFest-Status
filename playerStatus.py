@@ -106,6 +106,7 @@ def update_state(new_state):
         status["in_backstage"] = in_backstage
         write_status_to_file(status)
         print(f"Player is {'now in' if in_backstage else 'no longer in'} the backstage area.")
+        end_song_state()
         sys.stdout.flush()
 
 def update_song_state(song, instrument, intensity, difficulty, artist, album_art):
@@ -284,11 +285,16 @@ def monitor_log_file():
                             current_album_art = song_info['albumArtFilename']
                         else:
                             current_song = None
-
-                    # Check for Song End
-                    if 'LogPilgrimQuickplayStateMachine: Display: (Client -1)Leaving Pilgrim Quickplay state EPilgrimQuickplayState::SongGameplay' in line:
+                    
+                    # Check for "Playback reached end at play position" to determine whether player finished the song
+                    if 'Playback reached end at play position' in line:
+                        print("Song finished playing.")
                         end_song_state()
-
+                            
+                    # Check for Song End
+                    #if 'LogPilgrimQuickplayStateMachine: Display: (Client -1)Leaving Pilgrim Quickplay state EPilgrimQuickplayState::SongGameplay' in line:
+                    #    end_song_state()
+                    
                     # Check for entering Song Results state (post-game screen)
                     if 'LogPilgrimQuickplayStateMachine: Display: (Client -1)Entering Pilgrim Quickplay state EPilgrimQuickplayState::SongResults' in line:
                         in_song_results = True
