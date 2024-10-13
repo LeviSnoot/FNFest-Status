@@ -21,10 +21,6 @@ diff.py
 status.json
 example-status.json
 
-# API cache
-last_update.txt
-spark-tracks.json
-
 # IDE and editor settings
 .vscode/
 .idea/
