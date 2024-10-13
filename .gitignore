@@ -21,6 +21,9 @@ diff.py
 status.json
 example-status.json
 
+# Local pyenv conf
+.python-version
+
 # IDE and editor settings
 .vscode/
 .idea/

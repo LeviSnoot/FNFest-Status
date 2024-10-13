@@ -13,7 +13,7 @@ You can use the demo web app I created to add a "Now Playing" widget to your str
 The script (`playerStatus.py`) simply reads your Fortnite log file (located in `%localappdata%\FortniteGame\Saved\Logs\FortniteGame.log`) and filters it for known events relating to Fortnite Festival. It calls on the public [Fortnite Festival Content API](https://fortnitecontent-website-prod07.ol.epicgames.com/content/api/pages/fortnite-game/spark-tracks) to match song ID's from the log to their metadata such as track and artist names.
 
 ## Prerequisites
-- Python 3.x
+- Python 3.9 or higher
 - Fortnite
 - Windows
 

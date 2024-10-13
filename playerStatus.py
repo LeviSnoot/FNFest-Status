@@ -6,7 +6,6 @@ import time
 import psutil
 import json
 import requests
-from datetime import datetime
 import sys
 
 # Path to the status file
