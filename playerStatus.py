@@ -19,6 +19,9 @@ initial_status = {
     "current_intensity": None,
     "current_difficulty": None,
     "current_album_art": None,
+    "icon_bass": None,
+    "icon_guitar": None,
+    "icon_vocals": None,
     "song_state": False,
     "is_game_running": False,
     "is_battle_stage": False,
@@ -108,7 +111,7 @@ def update_state(new_state):
         end_song_state()
         sys.stdout.flush()
 
-def update_song_state(song, instrument, intensity, difficulty, artist, album_art):
+def update_song_state(song, instrument, intensity, difficulty, artist, album_art, icon_bass, icon_guitar, icon_vocals):
     global playing_song, current_song, current_instrument, current_intensity, current_difficulty
     playing_song = True
     current_song = song
@@ -125,6 +128,9 @@ def update_song_state(song, instrument, intensity, difficulty, artist, album_art
         "current_intensity": intensity,
         "current_difficulty": difficulty,
         "current_album_art": album_art,
+        "icon_bass": icon_bass,
+        "icon_guitar": icon_guitar,
+        "icon_vocals": icon_vocals,
         "song_state": True
     })
     write_status_to_file(status)
@@ -282,6 +288,9 @@ def monitor_log_file():
                             current_song = song_info['trackTitle']
                             current_artist = song_info['artistName']
                             current_album_art = song_info['albumArtFilename']
+                            icon_bass = song_info.get('iconBass')
+                            icon_guitar = song_info.get('iconGuitar')
+                            icon_vocals = song_info.get('iconVocals')
                         else:
                             current_song = None
                     
@@ -338,7 +347,7 @@ def monitor_log_file():
                             intensity_value = song_info['intensities'][instrument_key]
                             formatted_instrument = format_instrument_name(instrument)
                             formatted_difficulty = format_difficulty_name(difficulty)
-                            update_song_state(current_song, formatted_instrument, intensity_value, formatted_difficulty, current_artist, current_album_art)
+                            update_song_state(current_song, formatted_instrument, intensity_value, formatted_difficulty, current_artist, current_album_art, icon_bass, icon_guitar, icon_vocals)
                         else:
                             print(f"Instrument key '{instrument_key}' not found in song info.")
                             sys.stdout.flush()
