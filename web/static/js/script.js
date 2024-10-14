@@ -5,7 +5,10 @@ let previousData = {
     current_album_art: '',
     current_instrument: '',
     current_intensity: -1,
-    song_state: false
+    song_state: false,
+    icon_bass: '',
+    icon_guitar: '',
+    icon_vocals: ''
 };
 
 async function fetchStatus() {
@@ -21,6 +24,7 @@ async function fetchStatus() {
         const intensityIcon = document.getElementById('intensity_icon');
         const difficultyIcon = document.getElementById('difficulty_icon');
         const textInfo = document.getElementById('text_info');
+        const instrumentName = document.getElementById('instrument_name');
 
         if (data.song_state) {
             // Delay the visibility change to allow data to load
@@ -94,24 +98,30 @@ async function fetchStatus() {
         }
 
         let instrumentSrc;
+        let instrumentText = '';
         switch (data.current_instrument?.toLowerCase()) {
             case 'bass':
-                instrumentSrc = '/static/assets/img/bass.png';
+                instrumentSrc = data.icon_bass === 'Keyboard' ? '/static/assets/img/keyboard.png' : '/static/assets/img/bass.png';
+                instrumentText = data.icon_bass === 'Keyboard' ? 'Bass' : '';
                 break;
             case 'drums':
                 instrumentSrc = '/static/assets/img/drums.png';
                 break;
             case 'lead':
-                instrumentSrc = '/static/assets/img/lead.png';
+                instrumentSrc = data.icon_guitar === 'Keyboard' ? '/static/assets/img/keyboard.png' : '/static/assets/img/lead.png';
+                instrumentText = data.icon_guitar === 'Keyboard' ? 'Lead' : '';
                 break;
             case 'vocals':
-                instrumentSrc = '/static/assets/img/vocals.png';
+                instrumentSrc = data.icon_vocals === 'Keyboard' ? '/static/assets/img/keyboard.png' : '/static/assets/img/vocals.png';
+                instrumentText = data.icon_vocals === 'Keyboard' ? 'Vocals' : '';
                 break;
             case 'pro lead':
-                instrumentSrc = '/static/assets/img/pro_lead.png';
+                instrumentSrc = data.icon_guitar === 'Keyboard' ? '/static/assets/img/pro_keyboard.png' : '/static/assets/img/pro_lead.png';
+                instrumentText = data.icon_guitar === 'Keyboard' ? 'Pro Lead' : '';
                 break;
             case 'pro bass':
-                instrumentSrc = '/static/assets/img/pro_bass.png';
+                instrumentSrc = data.icon_bass === 'Keyboard' ? '/static/assets/img/pro_keyboard.png' : '/static/assets/img/pro_bass.png';
+                instrumentText = data.icon_bass === 'Keyboard' ? 'Pro Bass' : '';
                 break;
             default:
                 instrumentSrc = '';
@@ -123,12 +133,20 @@ async function fetchStatus() {
                 instrumentIcon.src = instrumentSrc;
                 instrumentIcon.style.display = 'block';
                 instrumentIcon.style.opacity = 1;
+                if (instrumentText) {
+                    instrumentName.textContent = instrumentText;
+                    instrumentName.style.display = 'block';
+                } else {
+                    instrumentName.style.display = 'none';
+                }
             } else {
                 instrumentIcon.style.display = 'none';
+                instrumentName.style.display = 'none';
             }
             previousData.current_instrument = data.current_instrument;
         } else if (!instrumentSrc) {
             instrumentIcon.style.display = 'none';
+            instrumentName.style.display = 'none';
         }
 
         if (previousData.current_intensity !== data.current_intensity) {
@@ -145,6 +163,9 @@ async function fetchStatus() {
         }
 
         previousData.song_state = data.song_state;
+        previousData.icon_bass = data.icon_bass;
+        previousData.icon_guitar = data.icon_guitar;
+        previousData.icon_vocals = data.icon_vocals;
 
     } catch (error) {
         console.error('Error fetching status:', error);

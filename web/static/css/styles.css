@@ -128,6 +128,16 @@ body {
   align-items: center; /* Center items vertically */
 }
 
+#instrument_name {
+  margin-top: 5px;
+  margin-right: 5px; /* Space between text and icon */
+  text-transform: uppercase;
+  font-size: 25px; /* Adjust font size as needed */
+  font-variation-settings: "wdth" 700, "wght" 668;
+  color: hsla(245, 100%, 80%, 0.55);
+  transition: opacity 0.5s ease-in-out; /* Smooth transition for text */
+}
+
 #instrument img {
   width: 40px; /* Small icon size */
   height: 40px; /* Small icon size */
