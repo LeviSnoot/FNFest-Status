@@ -8,7 +8,10 @@ let previousData = {
     song_state: false,
     icon_bass: '',
     icon_guitar: '',
-    icon_vocals: ''
+    icon_vocals: '',
+    is_battle_stage: null, // Add this to track the previous state of is_battle_stage
+    mode_name: '', // Add this to track the previous value of mode_name
+    round_number: 1 // Add this to track the previous value of round_number
 };
 
 async function fetchStatus() {
@@ -25,6 +28,10 @@ async function fetchStatus() {
         const difficultyIcon = document.getElementById('difficulty_icon');
         const textInfo = document.getElementById('text_info');
         const instrumentName = document.getElementById('instrument_name');
+        const modeName = document.getElementById('mode_name');
+        const gameMode = document.getElementById('game_mode');
+        const bsRound = document.getElementById('bs_round');
+        const roundNumber = document.getElementById('round_number');
 
         if (data.song_state) {
             // Delay the visibility change to allow data to load
@@ -160,6 +167,28 @@ async function fetchStatus() {
                 intensityIcon.style.display = 'none';
             }
             previousData.current_intensity = data.current_intensity;
+        }
+
+        // Update mode_name and game_mode color based on is_battle_stage
+        if (previousData.is_battle_stage !== data.is_battle_stage) {
+            modeName.style.opacity = 0;
+            setTimeout(() => {
+                modeName.textContent = data.is_battle_stage ? 'Battle Stage' : 'Main Stage';
+                gameMode.style.color = data.is_battle_stage ? 'rgb(250, 242, 2)' : 'rgb(254, 92, 155)';
+                bsRound.style.display = data.is_battle_stage ? 'block' : 'none';
+                modeName.style.opacity = 1;
+            }, 2000); // Adjust the delay as needed
+            previousData.is_battle_stage = data.is_battle_stage;
+        }
+
+        // Update round_number based on data.round_number
+        if (previousData.round_number !== data.round_number) {
+            roundNumber.style.opacity = 0;
+            setTimeout(() => {
+                roundNumber.textContent = `Round ${data.round_number || 1}`;
+                roundNumber.style.opacity = 1;
+            }, 2000); // Adjust the delay as needed
+            previousData.round_number = data.round_number;
         }
 
         previousData.song_state = data.song_state;

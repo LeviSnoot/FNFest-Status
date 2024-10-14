@@ -18,30 +18,26 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh; /* Full viewport height */
-  text-align: center; /* Center text in the body */
+  height: 100vh;
+  text-align: center;
 }
 
 .container {
-  position: relative; /* Required for the pseudo-element positioning */
+  position: relative;
   width: 95vw; 
   min-width: 480px;
-  max-width: 1280px; /* Adjusted maximum width */
-  height: 300px; /* Fixed height */
+  max-width: 1280px;
+  height: 300px;
   margin: 20px;
   background: linear-gradient(135deg, rgba(4, 3, 48, 0.98), rgba(23, 1, 66, 0.98));
   padding: 20px;
-  border-radius: 16px; /* Increased border-radius */
-  color: #fff; /* Ensure text is white */
-  overflow: hidden; /* Hide overflow */
-  display: flex; /* Use flexbox */
-  justify-content: center; /* Center items horizontally */
-  align-items: center; /* Center items vertically */
-  transition: opacity 0.5s ease-in-out; /* Smooth transition for background color */
-}
-
-.container.dimmed {
-  background-color: rgba(0, 0, 0, 0.5); /* Dimmed background */
+  border-radius: 16px;
+  color: #fff;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.5s ease-in-out;
 }
 
 .container::before {
@@ -51,52 +47,100 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  pointer-events: none; /* Ensure it doesn't interfere with interactions */
+  pointer-events: none;
 }
 
 #status {
-  display: flex; /* Use flexbox */
-  align-items: center; /* Center items vertically */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  overflow: hidden;
+}
+
+#status_row_1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+#game_mode {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 30px;
+  font-variation-settings: "wdth" 668, "wght" 550;
+  color: rgb(254, 92, 155);
+  margin: -10px;
+  transition: color 0.5s ease-in-out;
+}
+
+#bs_round {
+  text-transform: uppercase;
+  font-size: 35px;
+  font-style: italic;
+  font-variation-settings: "wdth" 750, "wght" 750;
+  transition: opacity 0.5s ease-in-out;
+}
+
+#status_row_2 {
+  display: flex;
+  align-items: center; 
+  justify-content: center;
+  width: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow: hidden;
 }
 
 #album_art {
   display: flex;
-  align-items: center; /* Center the album art vertically */
-  justify-content: center; /* Center the album art horizontally */
-  margin-right: 20px; /* Space between album art and text */
+  align-items: center; 
+  justify-content: center;
+  margin-right: 20px;
+  flex: 0 1 auto; 
+  aspect-ratio: 1;
+  max-height: 100%;
 }
 
 #album_art img {
-  width: 240px; /* Fixed width */
-  height: 240px; /* Fixed height */
-  border-radius: 16px; /* Increased border-radius for consistency */
-  transition: opacity 0.5s ease-in-out; /* Smooth transition for album art */
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  max-width: 512px;
+  max-height: 512px;
+  border-radius: 16px;
+  transition: opacity 0.5s ease-in-out;
 }
 
 #text_info {
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Center text vertically */
-  align-items: flex-start; /* Align text to the left */
-  text-align: left; /* Left-align text within the element */
-  overflow: hidden; /* Hide overflow */
-  font-size: 25px; /* Increase font size */
-  transition: opacity 0.5s ease-in-out; /* Smooth transition for text */
+  justify-content: center;
+  align-items: flex-start;
+  text-align: left;
+  overflow: hidden;
+  font-size: 25px;
+  transition: opacity 0.5s ease-in-out;
   padding-right: 10px;
+  flex: 0 1 auto;
+  min-width: 0;
 }
 
 #text_info h1 {
-  font-size: 25px; /* Increased font size */
-  margin: 0 0 5px 0; /* Remove top margin and reduce bottom margin */
-  font-variation-settings: "wdth" 650, "wght" 600; /* Thicker weight using variable font */
-  text-align: left; /* Left-align the heading text */
+  font-size: 25px;
+  margin: 0 0 5px 0; 
+  font-variation-settings: "wdth" 650, "wght" 600;
+  text-align: left;
 }
 
 #text_info div {
-  white-space: nowrap; /* Prevent text from wrapping */
-  overflow: hidden; /* Hide overflow */
-  text-overflow: ellipsis; /* Add ellipsis for overflow text */
-  transition: opacity 0.5s ease-in-out; /* Smooth transition for text */
+  white-space: nowrap;
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  transition: opacity 0.5s ease-in-out;
 }
 
 #current_artist {
@@ -111,50 +155,50 @@ body {
   font-variation-settings: "wdth" 750, "wght" 750;
   text-transform: uppercase;
   color: #fff;
-  margin-right: 10px; /* Add slight margin to the right */
-  white-space: normal; /* Allow text to wrap */
-  overflow: hidden; /* Hide overflow */
-  text-overflow: ellipsis; /* Add ellipsis for overflow text */
-  display: -webkit-box; /* Use flexbox for truncation */
-  -webkit-line-clamp: 2; /* Limit to 2 lines */
+  margin-right: 10px;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
   line-clamp: 2;
-  -webkit-box-orient: vertical; /* Vertical orientation for flexbox */
-  line-height: 1.2; /* Reduce line spacing */
-  padding-right: 5px; /* Add padding to the right */
+  -webkit-box-orient: vertical;
+  line-height: 1.2;
+  padding-right: 5px;
 }
 
 #instrument {
   display: flex;
-  align-items: center; /* Center items vertically */
+  align-items: center;
 }
 
 #instrument_name {
   margin-top: 5px;
-  margin-right: 5px; /* Space between text and icon */
+  margin-right: 5px;
   text-transform: uppercase;
-  font-size: 25px; /* Adjust font size as needed */
+  font-size: 25px;
   font-variation-settings: "wdth" 700, "wght" 668;
   color: hsla(245, 100%, 80%, 0.55);
-  transition: opacity 0.5s ease-in-out; /* Smooth transition for text */
+  transition: opacity 0.5s ease-in-out;
 }
 
 #instrument img {
-  width: 40px; /* Small icon size */
-  height: 40px; /* Small icon size */
-  margin-top: 10px; /* Space between text and icon */
-  transition: opacity 0.5s ease-in-out; /* Smooth transition for instrument icon */
+  width: 40px;
+  height: 40px;
+  margin-top: 10px;
+  transition: opacity 0.5s ease-in-out;
 }
 
 #difficulty_icon {
-  width: 40px; /* Small icon size */
-  height: 40px; /* Small icon size */
-  margin-left: 10px; /* Space between intensity icon and instrument icon */
-  transition: opacity 0.5s ease-in-out; /* Smooth transition for difficulty icon */
+  width: 40px;
+  height: 40px;
+  margin-left: 10px;
+  transition: opacity 0.5s ease-in-out;
 }
 
 #intensity_icon {
-  height: 40px; /* Fixed height */
-  width: auto !important; /* Maintain aspect ratio */
-  margin-left: 5px; /* Space between instrument icon and intensity icon */
-  transition: opacity 0.5s ease-in-out; /* Smooth transition for intensity icon */
+  height: 40px;
+  width: auto !important;
+  margin-left: 5px;
+  transition: opacity 0.5s ease-in-out;
 }

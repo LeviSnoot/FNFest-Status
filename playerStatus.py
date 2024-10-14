@@ -26,6 +26,7 @@ initial_status = {
     "is_game_running": False,
     "is_battle_stage": False,
     "in_backstage": False,
+    "round_number": 1,
     "in_song_results": False
 }
 
@@ -72,10 +73,12 @@ is_battle_stage = False
 in_lobby = False
 in_sleep_mode = False
 game_running_state = False
+round_counter = 1
 in_song_results = False
 
+
 def reset_state():
-    global in_backstage, matchmaking_started, playing_song, current_song, current_instrument, current_intensity, current_difficulty, is_battle_stage, in_lobby, in_sleep_mode, game_running_state, in_song_results
+    global in_backstage, matchmaking_started, playing_song, current_song, current_instrument, current_intensity, current_difficulty, is_battle_stage, in_lobby, in_sleep_mode, game_running_state, in_song_results, round_counter
     in_backstage = False
     matchmaking_started = False
     playing_song = False
@@ -84,6 +87,7 @@ def reset_state():
     in_sleep_mode = False
     game_running_state = False
     in_song_results = False
+    round_counter = 1
     print("State has been reset.")
     sys.stdout.flush()
 
@@ -94,21 +98,26 @@ def reset_state():
         "is_game_running": False,
         "is_battle_stage": False,
         "in_backstage": False,
-        "in_song_results": False
+        "in_song_results": False,
+        "round_number": round_counter
     })
     write_status_to_file(status)
     print(f"Updated status: {json.dumps(status, indent=4)}")
     sys.stdout.flush()
 
 def update_state(new_state):
-    global in_backstage
+    global in_backstage, round_counter
     if in_backstage != new_state:
         in_backstage = new_state
         status = read_status_from_file()
         status["in_backstage"] = in_backstage
+        if in_backstage:
+            round_counter = 1
+            status["round_number"] = round_counter
+            print(f"Player is now in the backstage area.")
+        else:
+            print(f"Player is no longer in the backstage area.")
         write_status_to_file(status)
-        print(f"Player is {'now in' if in_backstage else 'no longer in'} the backstage area.")
-        end_song_state()
         sys.stdout.flush()
 
 def update_song_state(song, instrument, intensity, difficulty, artist, album_art, icon_bass, icon_guitar, icon_vocals):
@@ -131,6 +140,7 @@ def update_song_state(song, instrument, intensity, difficulty, artist, album_art
         "icon_bass": icon_bass,
         "icon_guitar": icon_guitar,
         "icon_vocals": icon_vocals,
+        "round_number": round_counter,
         "song_state": True
     })
     write_status_to_file(status)
@@ -142,12 +152,13 @@ def update_song_state(song, instrument, intensity, difficulty, artist, album_art
     sys.stdout.flush()
 
 def end_song_state():
-    global playing_song
+    global playing_song, round_counter
     playing_song = False
+    round_counter += 1
     
-    # Write to the status file with song_state reset
     status = read_status_from_file()
     status["song_state"] = False
+    status["round_number"] = round_counter
     write_status_to_file(status)
     print(f"Updated status: {json.dumps(status, indent=4)}")
     sys.stdout.flush()
