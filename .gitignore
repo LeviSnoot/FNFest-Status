@@ -16,6 +16,7 @@ __pycache__/
 # Diagnostic scripts
 log_streamer.py
 diff.py
+start.ps1
 
 # Status files
 status.json
