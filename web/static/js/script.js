@@ -11,8 +11,16 @@ let previousData = {
     icon_vocals: '',
     is_battle_stage: null,
     mode_name: '',
-    round_number: 1
+    round_number: 1,
+    playback_start_time: null,
+    duration: null
 };
+
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+}
 
 async function fetchStatus() {
     try {
@@ -32,6 +40,9 @@ async function fetchStatus() {
         const gameMode = document.getElementById('game_mode');
         const bsRound = document.getElementById('bs_round');
         const roundNumber = document.getElementById('round_number');
+        const timeElapsed = document.getElementById('time_elapsed');
+        const progressBar = document.getElementById('progress_bar');
+        const timeRemaining = document.getElementById('time_remaining');
 
         if (data.song_state) {
             // Delay the visibility change to allow data to load
@@ -182,10 +193,28 @@ async function fetchStatus() {
             previousData.round_number = data.round_number;
         }
 
+        // Update playback bar
+        if (data.song_state && data.playback_start_time && data.duration) {
+            const currentTime = Date.now() / 1000;
+            const elapsedTime = Math.min(currentTime - data.playback_start_time, data.duration);
+            const remainingTime = data.duration - elapsedTime;
+            const progressPercentage = (elapsedTime / data.duration) * 100;
+
+            timeElapsed.textContent = formatTime(elapsedTime);
+            timeRemaining.textContent = formatTime(remainingTime);
+            progressBar.style.width = `${progressPercentage}%`;
+        } else {
+            timeElapsed.textContent = '0:00';
+            timeRemaining.textContent = data.duration ? formatTime(data.duration) : '0:00';
+            progressBar.style.width = '0%';
+        }
+
         previousData.song_state = data.song_state;
         previousData.icon_bass = data.icon_bass;
         previousData.icon_guitar = data.icon_guitar;
         previousData.icon_vocals = data.icon_vocals;
+        previousData.playback_start_time = data.playback_start_time;
+        previousData.duration = data.duration;
 
     } catch (error) {
         console.error('Error fetching status:', error);

@@ -16,9 +16,8 @@ body {
   overflow-x: hidden;
   user-select: none;
   display: flex;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
-  height: 100vh;
   text-align: center;
 }
 
@@ -100,8 +99,8 @@ body {
 }
 
 #album_art img {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 300px;
+  max-height: 300px;
   width: auto;
   height: auto;
   object-fit: contain;
@@ -198,4 +197,38 @@ body {
   width: auto !important;
   margin-left: 5px;
   transition: opacity 0.5s ease-in-out;
+}
+
+#status_row_3 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+#playback_bar {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+#time_elapsed, #time_remaining {
+  font-size: 16px;
+  margin: 0 10px;
+}
+
+#progress_container {
+  flex-grow: 1;
+  height: 10px;
+  background-color: hsla(0, 0%, 100%, 0.5);
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+}
+
+#progress_bar {
+  height: 100%;
+  background-color: #fff;
+  width: 0%;
+  transition: width 0.1s ease;
 }

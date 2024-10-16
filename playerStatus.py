@@ -7,6 +7,7 @@ import psutil
 import json
 import requests
 import sys
+import re
 
 # Path to the status file
 status_file_path = os.path.join(os.path.dirname(__file__), 'status.json')
@@ -27,7 +28,9 @@ initial_status = {
     "is_battle_stage": False,
     "in_backstage": False,
     "round_number": 1,
-    "in_song_results": False
+    "in_song_results": False,
+    "duration": None,
+    "playback_start_time": None
 }
 
 # Check if the status file exists, if not create it with initial values
@@ -99,14 +102,16 @@ def reset_state():
         "is_battle_stage": False,
         "in_backstage": False,
         "in_song_results": False,
-        "round_number": round_counter
+        "round_number": round_counter,
+        "duration": None,
+        "playback_start_time": None
     })
     write_status_to_file(status)
     print(f"Updated status: {json.dumps(status, indent=4)}")
     sys.stdout.flush()
 
 def update_state(new_state):
-    global in_backstage, round_counter
+    global in_backstage, round_counter, playing_song
     if in_backstage != new_state:
         in_backstage = new_state
         status = read_status_from_file()
@@ -115,12 +120,15 @@ def update_state(new_state):
             round_counter = 1
             status["round_number"] = round_counter
             print(f"Player is now in the backstage area.")
+            if playing_song:
+                end_song_state()
+                status["song_state"] = False  # Ensure song_state is set to False
         else:
             print(f"Player is no longer in the backstage area.")
         write_status_to_file(status)
         sys.stdout.flush()
 
-def update_song_state(song, instrument, intensity, difficulty, artist, album_art, icon_bass, icon_guitar, icon_vocals):
+def update_song_state(song, instrument, intensity, difficulty, artist, album_art, icon_bass, icon_guitar, icon_vocals, duration, playback_start_time):
     global playing_song, current_song, current_instrument, current_intensity, current_difficulty
     playing_song = True
     current_song = song
@@ -141,7 +149,9 @@ def update_song_state(song, instrument, intensity, difficulty, artist, album_art
         "icon_guitar": icon_guitar,
         "icon_vocals": icon_vocals,
         "round_number": round_counter,
-        "song_state": True
+        "song_state": True,
+        "duration": duration,
+        "playback_start_time": playback_start_time
     })
     write_status_to_file(status)
     print(f"Updated status: {json.dumps(status, indent=4)}")
@@ -149,6 +159,14 @@ def update_song_state(song, instrument, intensity, difficulty, artist, album_art
     print(f"Playing song: {current_song} by {artist}, Instrument: {instrument}, Intensity: {intensity}, Difficulty: {difficulty}")
     sys.stdout.flush()
     print(f"Album Art URL: {album_art}")
+    sys.stdout.flush()
+
+def update_playback_start_time(playback_start_time):
+    # Update only the playback_start_time in the status file
+    status = read_status_from_file()
+    status["playback_start_time"] = playback_start_time
+    write_status_to_file(status)
+    print(f"Updated playback start time: {playback_start_time}")
     sys.stdout.flush()
 
 def end_song_state():
@@ -212,6 +230,9 @@ def monitor_log_file():
     global matchmaking_started, is_battle_stage, game_running, current_song, current_artist, current_album_art, in_lobby, in_sleep_mode, game_running_state, in_song_results
 
     game_running = False
+
+    # Regex to match playback start log lines
+    playback_start_regex = re.compile(r'LogElectraPlayer: \[.*\] Playback started at play position (\d+\.\d+)')
 
     while True:
         if is_game_running():
@@ -302,6 +323,7 @@ def monitor_log_file():
                             icon_bass = song_info.get('iconBass')
                             icon_guitar = song_info.get('iconGuitar')
                             icon_vocals = song_info.get('iconVocals')
+                            duration = song_info.get('duration')
                         else:
                             current_song = None
                     
@@ -313,7 +335,7 @@ def monitor_log_file():
                     # Check for Song End
                     #if 'LogPilgrimQuickplayStateMachine: Display: (Client -1)Leaving Pilgrim Quickplay state EPilgrimQuickplayState::SongGameplay' in line:
                     #    end_song_state()
-                    
+
                     # Check for entering Song Results state (post-game screen)
                     if 'LogPilgrimQuickplayStateMachine: Display: (Client -1)Entering Pilgrim Quickplay state EPilgrimQuickplayState::SongResults' in line:
                         in_song_results = True
@@ -358,7 +380,7 @@ def monitor_log_file():
                             intensity_value = song_info['intensities'][instrument_key]
                             formatted_instrument = format_instrument_name(instrument)
                             formatted_difficulty = format_difficulty_name(difficulty)
-                            update_song_state(current_song, formatted_instrument, intensity_value, formatted_difficulty, current_artist, current_album_art, icon_bass, icon_guitar, icon_vocals)
+                            update_song_state(current_song, formatted_instrument, intensity_value, formatted_difficulty, current_artist, current_album_art, icon_bass, icon_guitar, icon_vocals, duration, None)
                         else:
                             print(f"Instrument key '{instrument_key}' not found in song info.")
                             sys.stdout.flush()
@@ -380,6 +402,16 @@ def monitor_log_file():
                         in_sleep_mode = False
                         print("Player left Sleep Mode.")
                         sys.stdout.flush()
+
+                    # Check for Playback Start
+                    match = playback_start_regex.search(line)
+                    if match and playing_song:
+                        playback_start_time = time.time()
+                        playback_position = match.group(1)
+                        print(f"Playback started at position: {playback_position}")
+                        sys.stdout.flush()
+
+                        update_playback_start_time(playback_start_time)
 
             print("Fortnite has stopped.")
             sys.stdout.flush()
