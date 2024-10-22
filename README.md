@@ -4,13 +4,13 @@
 Monitor and display the status of Fortnite Festival events.
 
 ## Features
-- Displays current song information, difficulty, intensity and album art (the latter through [fnfest-artwork-store](https://github.com/LeviSnoot/fnfest-artwork-store) to avoid excessive fetching on Epic's servers).
+- Displays currently playing song information, like difficulty, intensity and album art.
 - Includes a Flask web app that can be used in OBS to display information on stream.
 
 ## What does it do?
 You can use the demo web app I created to add a "Now Playing" widget to your streams by adding it as a Browser Source in OBS (further insctructions [below](#usage))
 
-The script (`playerStatus.py`) simply reads your Fortnite log file (located in `%localappdata%\FortniteGame\Saved\Logs\FortniteGame.log`) and filters it for known events relating to Fortnite Festival. It calls on the public [Fortnite Festival Content API](https://fortnitecontent-website-prod07.ol.epicgames.com/content/api/pages/fortnite-game/spark-tracks) to match song ID's from the log to their metadata such as track and artist names.
+The script (`playerStatus.py`) simply reads your Fortnite log file (located in `%localappdata%\FortniteGame\Saved\Logs\FortniteGame.log`) and filters it for known events relating to Fortnite Festival. It calls on a [cached version](https://github.com/LeviSnoot/FNFest-Content-API) of the public [Fortnite Festival Content API](https://fortnitecontent-website-prod07.ol.epicgames.com/content/api/pages/fortnite-game/spark-tracks) to match song ID's from the log to their metadata such as track and artist names.
 
 ## Prerequisites
 - Python 3.9 or higher
@@ -73,11 +73,10 @@ git pull
 
 # Roadmap
 
-- - [ ] Discord RPC implementation.
-- - [ ] Cleaner launch procedure.
+Check the [Projects](https://github.com/users/LeviSnoot/projects/1) section.
 
 ## Known issues
-- Does not handle *multiplayer* Main Stage lobbies correctly. When I've inspected Fortnite's log file, I have been unable to find a reliable way to identify which player is the local player. Feel free to create a pull request if you have a solution. 
+- Does not handle *multiplayer* Main Stage lobbies correctly. When I've inspected Fortnite's log file, I have been unable to find a reliable way to identify which player is the local player. Feel free to create a pull request if you have a solution. Related issue thread: [#15](https://github.com/LeviSnoot/FNFest-Status/issues/15)
 
 ## Disclaimer
 
