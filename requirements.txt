@@ -9,6 +9,7 @@ itsdangerous==2.2.0
 Jinja2==3.1.4
 MarkupSafe==2.1.5
 psutil==6.0.0
+pypresence @ https://github.com/qwertyquerty/pypresence/archive/master.zip
 requests==2.32.3
 urllib3==2.2.3
 Werkzeug==3.0.4
