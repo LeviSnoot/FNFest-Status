@@ -2,14 +2,15 @@ import asyncio
 import sys
 import signal
 import traceback
+import argparse
 
 # Use the same Python executable that is running this script
 python_executable = sys.executable
 
-async def run_player_status():
-    print("Starting playerStatus.py...")
+async def run_script(script_name, filter_output=None):
+    print(f"Starting {script_name}")
     process = await asyncio.create_subprocess_exec(
-        python_executable, 'playerStatus.py',
+        python_executable, script_name,
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE
     )
@@ -19,74 +20,41 @@ async def run_player_status():
             while True:
                 line = await stream.readline()
                 if line:
-                    callback(line.decode('utf-8'))
-                else:
-                    break
-        except asyncio.CancelledError:
-            pass
-
-    try:
-        await asyncio.gather(
-            read_stream(process.stdout, lambda line: print(line, end='')),
-            read_stream(process.stderr, lambda line: print(line, end=''))
-        )
-    except asyncio.CancelledError:
-        print("Player status task cancelled.")
-    finally:
-        await process.wait()  # Ensure process termination
-        print("playerStatus.py has exited.")
-
-        # Only terminate the process if it's still running
-        if process.returncode is None:
-            process.terminate()
-            await process.wait()
-
-async def run_web_app():
-    print("Starting web/app.py...")
-    process = await asyncio.create_subprocess_exec(
-        python_executable, 'web/app.py',
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE
-    )
-
-    async def read_stream(stream):
-        try:
-            while True:
-                line = await stream.readline()
-                if line:
                     decoded_line = line.decode('utf-8')
-                    # Only print the line if it contains " * Running on"
-                    if ' * Running on ' in decoded_line:
-                        print(decoded_line, end='')
+                    if filter_output is None or filter_output in decoded_line:
+                        callback(decoded_line)
                 else:
                     break
         except asyncio.CancelledError:
-            print("Stream reading task cancelled.")
             pass
 
     try:
         await asyncio.gather(
-            read_stream(process.stdout),
-            read_stream(process.stderr)
+            read_stream(process.stdout, lambda line: print(f"{script_name} stdout: {line}", end='')),
+            read_stream(process.stderr, lambda line: print(f"{script_name} stderr: {line}", end=''))
         )
     except asyncio.CancelledError:
-        print("Web app task cancelled.")
+        print(f"{script_name} task cancelled.")
     finally:
         await process.wait()  # Ensure process termination
-        print("web/app.py has exited.")
+        print(f"{script_name} has exited.")
 
         # Only terminate the process if it's still running
         if process.returncode is None:
             process.terminate()
             await process.wait()
 
-async def main():
-    player_status_task = asyncio.create_task(run_player_status())
-    web_app_task = asyncio.create_task(run_web_app())
+async def main(args):
+    tasks = [asyncio.create_task(run_script('playerStatus.py'))]
 
-    # Wait for both tasks and handle cancellation
+    if args.discord:
+        tasks.append(asyncio.create_task(run_script('discordRPC.py')))
+    if args.web:
+        tasks.append(asyncio.create_task(run_script('web/app.py', filter_output=' * Running on ')))
+
+    # Wait for all tasks and handle cancellation
     try:
-        await asyncio.gather(player_status_task, web_app_task)
+        await asyncio.gather(*tasks)
     except asyncio.CancelledError:
         print("Main tasks canceled.")
 
@@ -112,6 +80,11 @@ async def shutdown(loop):
     loop.stop()
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run additional scripts.")
+    parser.add_argument('--discord', action='store_true', help="Run Discord RPC")
+    parser.add_argument('--web', action='store_true', help="Run Stream Widget")
+    args = parser.parse_args()
+
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
@@ -124,7 +97,7 @@ if __name__ == "__main__":
     signal.signal(signal.SIGTERM, handle_signal)
 
     try:
-        loop.run_until_complete(main())
+        loop.run_until_complete(main(args))
     except KeyboardInterrupt:
         print("Exiting...")
     except Exception as e:
