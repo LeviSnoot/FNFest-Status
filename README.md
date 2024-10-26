@@ -67,19 +67,24 @@ The script currently works best if you start it after Fortnite has launched and 
 
 ## Stream Widget
 
+![](assets/stream-widget.png)
+> Image: Stream Widget running from a 720x420px browser window.
+
 Once you've started `main.py` with `--web`, add a browser source in OBS (or any other streaming software that supports browser sources).
 
 **URL:** `http://127.0.0.1:<port-number>`
 
-**Width:** 720 - 1280px
+**Width:** 520px
 
-**Height:** 400px
+**Height:** 420px
 
 - [x] Use custom frame rate
 
 **FPS:** 60
 
-Leave everything else default, including Custom CSS.
+Leave everything else default, including Custom CSS. 
+
+**NOTE:** The width and height values are the *minimum* required to display info properly. Extending the height won't really affect anything but you can (and probably should) set the width to anything over 520px. I recommend setting the width to 720px as this will display most song titles without truncation.
 
 # Discord Rich Presence
 
