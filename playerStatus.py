@@ -244,7 +244,7 @@ def monitor_log_file():
                 status["is_game_running"] = True
                 write_status_to_file(status)
 
-            with open(log_file_path, 'r') as log_file:
+            with open(log_file_path, 'r', encoding='utf-8-sig') as log_file:
                 log_file.seek(0, os.SEEK_END)  # Move to the end of the file
 
                 while is_game_running():

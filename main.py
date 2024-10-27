@@ -30,8 +30,8 @@ async def run_script(script_name, filter_output=None):
 
     try:
         await asyncio.gather(
-            read_stream(process.stdout, lambda line: print(f"{script_name} stdout: {line}", end='')),
-            read_stream(process.stderr, lambda line: print(f"{script_name} stderr: {line}", end=''))
+            read_stream(process.stdout, lambda line: print(f"{line}", end='')),
+            read_stream(process.stderr, lambda line: print(f"{line}", end=''))
         )
     except asyncio.CancelledError:
         print(f"{script_name} task cancelled.")
