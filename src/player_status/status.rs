@@ -1,13 +1,14 @@
+use serde::{ Deserialize, Serialize };
 use std::fs;
 use std::path::Path;
-use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Status {
+    pub song_id: Option<String>,
     pub current_song: Option<String>,
     pub current_artist: Option<String>,
     pub current_instrument: Option<String>,
-    pub current_intensity: Option<String>,
+    pub current_intensity: Option<f64>,
     pub current_difficulty: Option<String>,
     pub current_album_art: Option<String>,
     pub icon_bass: Option<String>,
@@ -28,6 +29,7 @@ pub fn initialize_status_file() {
 
     if !status_file_path.exists() {
         let initial_status = Status {
+            song_id: None,
             current_song: None,
             current_artist: None,
             current_instrument: None,
