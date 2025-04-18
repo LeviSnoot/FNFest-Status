@@ -43,6 +43,7 @@ if not os.path.exists(status_file_path):
 def write_status_to_file(status):
     with open(status_file_path, 'w') as f:
         json.dump(status, f)
+    sys.stdout.flush()
 
 def read_status_from_file():
     with open(status_file_path, 'r') as f:
@@ -355,10 +356,11 @@ def monitor_log_file():
                         sys.stdout.flush()
 
                     # Check for Instrument and Difficulty
-                    if 'LogPilgrimGemBreakListener: UPilgrimGemBreakListener::Init:' in line:
-                        parts = line.split('using track ')[1].split(' and Difficulty ')
-                        instrument = parts[0].split('::')[-1].replace('Track', '').lower()
-                        difficulty = parts[1].split('::')[-1].replace('Difficulty', '').strip()  # Strip whitespace
+                    gem_break_setup_re = re.compile(r'LogPilgrimGemBreakListener: \[.*\] Setup for .* using track EPilgrimTrackType::Track(\w+) and Difficulty EPilgrimSongDifficulty::Difficulty(\w+)', re.IGNORECASE)
+                    match = gem_break_setup_re.search(line)
+                    if match:
+                        instrument = match.group(1).lower()
+                        difficulty = match.group(2).capitalize()
 
                         # Map the instrument to the correct key in the intensities dictionary
                         intensity_mapping = {
