@@ -62,7 +62,8 @@ album_art_base_url = 'https://levisnoot.github.io/fnfest-artwork-store/album_art
 # Mapping of known discrepancies between log song IDs and API song IDs
 song_id_mapping = {
     'astronautintheocean': 'astronoutintheocean',
-    'theedgeofglory': 'edgeofglory'
+    'theedgeofglory': 'edgeofglory',
+    'twentyfourkmagic': '24kmagic'
 }
 
 # Initial state
