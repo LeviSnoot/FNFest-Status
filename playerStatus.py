@@ -256,7 +256,7 @@ def monitor_log_file():
 
                     # Skip checks if in lobby
                     if in_lobby:
-                        if 'LogAthenaMatchmakingWidget: UFortAthenaMatchmakingWidgetLegacy::RequestMatchmakingStart' in line:
+                        if 'LogAthenaMatchmakingWidget: [3a51]' in line:
                             matchmaking_started = True
                             in_lobby = False
                             print("Matchmaking started.")
@@ -264,7 +264,7 @@ def monitor_log_file():
                         continue
 
                     # Check for Matchmaking start
-                    if 'LogAthenaMatchmakingWidget: UFortAthenaMatchmakingWidgetLegacy::RequestMatchmakingStart' in line:
+                    if 'LogAthenaMatchmakingWidget: [3a51]' in line:
                         matchmaking_started = True
                         print("Matchmaking started.")
                         sys.stdout.flush()
@@ -388,19 +388,19 @@ def monitor_log_file():
                             sys.stdout.flush()
 
                     # Check for Matchmaking cancellation
-                    if 'LogMatchmakingServiceClient: HandleError - Type: \'Canceled\'' in line:
+                    if 'LogAthenaMatchmakingWidget: [3b4c]' in line:
                         matchmaking_started = False
                         print("Matchmaking canceled.")
                         sys.stdout.flush()
 
                     # Check for entering Sleep Mode
-                    if 'LogFortPlaytimeManager: UFortPlaytimeManager::SetPlaytimeState - Changing Playtime State from Unblocked to Sleep' in line:
+                    if 'LogFortPlaytimeManager: [3f35] Changing Playtime State from Unblocked to Sleep' in line:
                         in_sleep_mode = True
                         print("Player entered Sleep Mode.")
                         sys.stdout.flush()
 
                     # Check for leaving Sleep Mode
-                    if 'LogFortPlaytimeManager: UFortPlaytimeManager::SetPlaytimeState - Changing Playtime State from Sleep to Unblocked' in line:
+                    if 'LogFortPlaytimeManager: [3f35] Changing Playtime State from Sleep to Unblocked' in line:
                         in_sleep_mode = False
                         print("Player left Sleep Mode.")
                         sys.stdout.flush()
