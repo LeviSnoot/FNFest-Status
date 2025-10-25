@@ -1,3 +1,10 @@
+## ⚠️ Archived
+
+This project is archived due to lack of time and interest in maintenance. Feel free to fork and maintain it yourself should you see value in doing so.
+My primary reasoning for creating this project was to have a Discord Presence for Fortnite Festival. Unfortunately, despite my efforts, there appears to be no way to give this presence priority over Fortnite's own Discord Presence, which can't be disabled individually. This combined with the fact that Fortnite's own presence has improved lately is another reason for me to put FNFest-Status behind me. Thank you for your support!
+
+---
+
 ![](assets/gh-banner.png)
 
 # FNFest-Status
